@@ -26,7 +26,7 @@ const toast = document.getElementById('toast');
 const resetPasswordForm = document.getElementById
     ('reset-password-form');
 const toastMessage = document.getElementById('toast-message');
-
+const logout = document.getElementById('logout');
 
 //Event listeners
 signUpButton.addEventListener('click', () => {
@@ -87,11 +87,11 @@ loginForm.addEventListener('submit', (e) => {
     const password = loginForm['login-password'].value;
 
     auth.signInWithEmailAndPassword(email, password)
-        .then(()=>{
+        .then(() => {
             showToast('Logged in successfully!!', 'success');
             loginForm.reset();
             //redirect to dashboard 
-            //window.location.href = 'dashboard.html'
+            window.location.href = 'dashboard.html'
         })
         .catch((error) => {
             showToast(error.message, 'error');
@@ -108,8 +108,30 @@ function showToast(message, type) {
 
     setTimeout(() => {
         toast.className = toast.className.replace('show', '');
-        if(type){
+        if (type) {
             toast.classList.remove(type);
         }
     }, 3000);
 }
+
+//atuth state obeserver
+auth.onAuthStateChanged((user) => {
+    if (user) {
+        //user is signed in
+        window.location.href = 'dashboard.html';
+    } else {
+        //user is signed out
+        window.location.href = 'index.html';
+    }
+});
+
+logout.addEventListener('click', () => {
+    auth.signOut()
+        .then(()=>{
+            window.location.href = 'index.html';
+            showToast('User signed out');
+        })
+        .catch((error) => {
+            showToast(error.message, 'error');
+        })
+})
