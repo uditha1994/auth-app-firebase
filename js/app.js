@@ -19,6 +19,14 @@ const container = document.getElementById('container');
 const signupForm = document.getElementById('signup-form');
 const loginForm = document.getElementById('login-form');
 const forgotPasswordLink = document.getElementById('forget-password');
+const forgotPasswordModal = document.getElementById
+    ('forgot-password-modal');
+const closeModal = document.querySelector('.close-modal');
+const toast = document.getElementById('toast');
+const resetPasswordForm = document.getElementById
+    ('reset-password-form');
+const toastMessage = document.getElementById('toast-message');
+
 
 //Event listeners
 signUpButton.addEventListener('click', () => {
@@ -29,9 +37,18 @@ signInButton.addEventListener('click', () => {
     container.classList.remove('right-panel-active');
 });
 
+forgotPasswordLink.addEventListener('click', (e) => {
+    e.preventDefault();
+    forgotPasswordModal.style.display = 'block';
+});
+
+closeModal.addEventListener('click', () => {
+    forgotPasswordModal.style.display = 'none';
+});
+
 signupForm.addEventListener('submit', (e) => {
     e.preventDefault() //stop form submitting
-    
+
     //sign up process
     const name = signupForm['signup-name'].value;
     const email = signupForm['signup-email'].value;
@@ -46,18 +63,53 @@ signupForm.addEventListener('submit', (e) => {
 
     //create user with firebase auth
     auth.createUserWithEmailAndPassword(email, password)
-    .then((userCredential)=>{
-        //update user profile with name
-        return userCredential.user.updateProfile({
-            displayName: name
+        .then((userCredential) => {
+            //update user profile with name
+            return userCredential.user.updateProfile({
+                displayName: name
+            });
+        })
+        .then(() => {
+            showToast('Account created successfully', 'success');
+            signupForm.reset();
+            container.classList.remove('right-panel-active');
+        })
+        .catch((error) => {
+            showToast(error.message, 'error');
         });
-    })
-    .then(()=>{
-        console.log('Account created successfully');
-        signupForm.reset();
-        container.classList.remove('right-panel-active');
-    })
-    .catch((error)=>{
-        console.log(`Error: ${error.message}`);
-    });
 });
+
+//Sign In
+loginForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const email = loginForm['login-email'].value;
+    const password = loginForm['login-password'].value;
+
+    auth.signInWithEmailAndPassword(email, password)
+        .then(()=>{
+            showToast('Logged in successfully!!', 'success');
+            loginForm.reset();
+            //redirect to dashboard 
+            //window.location.href = 'dashboard.html'
+        })
+        .catch((error) => {
+            showToast(error.message, 'error');
+        });
+});
+
+function showToast(message, type) {
+    toastMessage.textContent = message;
+    toast.className = 'toast show'
+
+    if (type) {
+        toast.classList.add(type);
+    }
+
+    setTimeout(() => {
+        toast.className = toast.className.replace('show', '');
+        if(type){
+            toast.classList.remove(type);
+        }
+    }, 3000);
+}
