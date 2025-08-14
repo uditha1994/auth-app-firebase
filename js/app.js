@@ -26,7 +26,6 @@ const toast = document.getElementById('toast');
 const resetPasswordForm = document.getElementById
     ('reset-password-form');
 const toastMessage = document.getElementById('toast-message');
-const logout = document.getElementById('logout');
 
 //Event listeners
 signUpButton.addEventListener('click', () => {
@@ -124,14 +123,3 @@ auth.onAuthStateChanged((user) => {
         window.location.href = 'index.html';
     }
 });
-
-logout.addEventListener('click', () => {
-    auth.signOut()
-        .then(()=>{
-            window.location.href = 'index.html';
-            showToast('User signed out');
-        })
-        .catch((error) => {
-            showToast(error.message, 'error');
-        })
-})
