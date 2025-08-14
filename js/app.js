@@ -113,13 +113,30 @@ function showToast(message, type) {
     }, 3000);
 }
 
-//atuth state obeserver
-auth.onAuthStateChanged((user) => {
-    if (user) {
-        //user is signed in
-        window.location.href = 'dashboard.html';
-    } else {
-        //user is signed out
-        window.location.href = 'index.html';
-    }
+//reset password
+resetPasswordForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = resetPasswordForm['reset-email'].value;
+
+    auth.sendPasswordResetEmail(email)
+        .then(() => {
+            showToast('Password reset email sent!', 
+                'success');
+            resetPasswordForm.reset();
+            forgotPasswordModal.style.display = 'none';
+        })
+        .catch((error) => {
+            showToast(error.message, 'error');
+        });
 });
+
+//atuth state obeserver
+// auth.onAuthStateChanged((user) => {
+//     if (user) {
+//         //user is signed in
+//         window.location.href = 'dashboard.html';
+//     } else {
+//         //user is signed out
+//         window.location.href = 'index.html';
+//     }
+// });
